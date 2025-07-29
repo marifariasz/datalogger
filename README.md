@@ -101,7 +101,7 @@ O LED RGB fornece um feedback rápido sobre o que o dispositivo está fazendo.
 O arquivo `.csv` gerado contém as seguintes colunas:
 `Amostra,Acel-X,Acel-Y,Acel-Z,Giro-X,Giro-Y,Giro-Z,Tempo(s)`
 
-Use o script Python `analise_dados.py` em um ambiente como o **Google Colab** ou **Jupyter Notebook** para facilmente fazer o upload do arquivo e gerar gráficos detalhados das leituras do acelerômetro e do giroscópio.
+Use o script Python `data_analysis.py` em um ambiente como o **Google Colab** ou **Jupyter Notebook** para facilmente fazer o upload do arquivo e gerar gráficos detalhados das leituras do acelerômetro e do giroscópio.
 
 ***
 

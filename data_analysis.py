@@ -32,13 +32,27 @@ if uploaded:
     try:
         df = pd.read_csv(filename)
 
-        # CORREÇÃO: O arquivo CSV já possui uma coluna de tempo em segundos.
-        # Apenas renomeamos para facilitar o uso, se necessário.
-        if 'Tempo(s)' in df.columns:
-            df.rename(columns={'Tempo(s)': 'Tempo_s'}, inplace=True)
-        else:
-            # Caso a coluna de tempo tenha outro nome ou não exista, informe o usuário.
-            print("Aviso: Coluna 'Tempo(s)' não encontrada. Verifique o cabeçalho do CSV.")
+        # --- DEBUG: Imprimir os nomes das colunas exatamente como foram lidos ---
+        print(f"\nColunas detectadas no arquivo: {list(df.columns)}")
+
+        # --- CORREÇÃO DEFINITIVA ---
+        # Mapear os nomes EXATOS do seu CSV (com espaços) para nomes limpos
+        # que usaremos no resto do script.
+        colunas_para_renomear = {
+            'Amostra': 'Amostra',
+            ' Aceleração X': 'Acel-X',
+            ' Aceleração Y': 'Acel-Y',
+            ' Aceleração Z': 'Acel-Z',
+            ' Giroscópio X': 'Giro-X',
+            ' Giroscópio Y': 'Giro-Y',
+            ' Giroscópio Z': 'Giro-Z',
+            ' Tempo (s)': 'Tempo_s'
+        }
+        df.rename(columns=colunas_para_renomear, inplace=True)
+        
+        # Verificar se a coluna de tempo existe após renomear
+        if 'Tempo_s' not in df.columns:
+            print("ERRO CRÍTICO: A coluna de tempo não foi encontrada mesmo após a tentativa de correção. Verifique o cabeçalho do seu CSV.")
             df = None
 
         if df is not None:
@@ -47,7 +61,7 @@ if uploaded:
             print(f"  - Total de amostras: {len(df)}")
             print(f"  - Duração da gravação: {df['Tempo_s'].max():.2f} segundos")
             print(f"  - Taxa de amostragem média: {len(df) / df['Tempo_s'].max():.1f} Hz")
-            print(f"  - Colunas encontradas: {list(df.columns)}")
+            print(f"  - Colunas após limpeza: {list(df.columns)}")
 
             # Mostrar as primeiras linhas dos dados
             print("\nAMOSTRA DOS DADOS (PRIMEIRAS 5 LINHAS):")
@@ -69,7 +83,7 @@ if df is not None:
     fig, axes = plt.subplots(2, 1, figsize=(15, 10), sharex=True)
     fig.suptitle('Análise de Dados do Sensor MPU6050', fontsize=18, fontweight='bold')
 
-    # CORREÇÃO: Usar os nomes de coluna corretos do CSV ('Acel-X', 'Acel-Y', 'Acel-Z')
+    # Usar os nomes de coluna LIMPOS e RENOMEADOS
     # Gráfico 1: ACELERAÇÃO
     axes[0].plot(df['Tempo_s'], df['Acel-X'], label='Aceleração X', color='red', linewidth=1.5, alpha=0.8)
     axes[0].plot(df['Tempo_s'], df['Acel-Y'], label='Aceleração Y', color='green', linewidth=1.5, alpha=0.8)
@@ -81,7 +95,6 @@ if df is not None:
     axes[0].grid(True, linestyle='--', alpha=0.5)
     axes[0].set_xlim(df['Tempo_s'].min(), df['Tempo_s'].max())
 
-    # CORREÇÃO: Usar os nomes de coluna corretos do CSV ('Giro-X', 'Giro-Y', 'Giro-Z')
     # Gráfico 2: GIROSCÓPIO
     axes[1].plot(df['Tempo_s'], df['Giro-X'], label='Giroscópio X', color='red', linewidth=1.5, alpha=0.8)
     axes[1].plot(df['Tempo_s'], df['Giro-Y'], label='Giroscópio Y', color='green', linewidth=1.5, alpha=0.8)
